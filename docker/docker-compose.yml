@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres
+    container_name: database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: laravel
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  php:
+    container_name: php
+    build:
+      context: .
+    ports:
+      - '8080:80'
+    volumes:
+      - ../src:/var/www/html
+      - ./default.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - database
+    privileged: true
+
+volumes:
+  dbdata:
